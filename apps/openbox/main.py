@@ -8,9 +8,20 @@ from typing import Optional, List
 from platform.models import Base, engine, SessionLocal, User, FileRecord, Message, Notification, Payment, Settings
 from platform.schemas import *
 from platform.gsp import user_placement, object_placement, name_length, digit_sum, first_letter_index
+from starlette.middleware.base import BaseHTTPMiddleware
+
+
 
 app = FastAPI(title="OpenBox", version="1.0.0")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+class VersionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-API-Version"] = "1.0.0"
+        return response
+
+app.add_middleware(VersionMiddleware)
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
