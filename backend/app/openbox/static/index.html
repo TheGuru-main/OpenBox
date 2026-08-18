@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OpenBox</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <h2>OpenBox</h2>
+        <button id="btnCloseSidebar">✕</button>
+      </div>
+      <a href="#" class="sidebar-link" data-screen="settings">⚙️ Settings</a>
+      <a href="#" class="sidebar-link" data-screen="notifications">🔔 Notifications</a>
+      <a href="#" class="sidebar-link" data-screen="messages">💬 Messages</a>
+      <a href="#" class="sidebar-link" data-screen="my-posts">📁 My Posts</a>
+      <a href="#" class="sidebar-link" data-screen="payments">💳 Payments</a>
+      <a href="#" class="sidebar-link" data-screen="premium">⭐ Premium</a>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <button id="btnOpenSidebar" class="sidebar-toggle">☰</button>
+        <h1 id="screenTitle">Apps</h1>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search...">
+        </div>
+      </div>
+
+      <!-- Screens -->
+      <div id="screen-apps" class="screen active">
+        <div class="upload-btn-container">
+          <button id="btnShowUpload">⬆️ Upload</button>
+        </div>
+        <div class="cards-container" id="appsContainer"></div>
+      </div>
+
+      <div id="screen-games" class="screen">
+        <div class="upload-btn-container">
+          <button id="btnShowUploadGames">⬆️ Upload</button>
+        </div>
+        <div class="cards-container" id="gamesContainer"></div>
+      </div>
+
+      <div id="screen-videos" class="screen">
+        <div class="upload-btn-container">
+          <button id="btnShowUploadVideos">⬆️ Upload</button>
+        </div>
+        <div class="cards-container" id="videosContainer"></div>
+      </div>
+
+      <div id="screen-settings" class="screen">Settings content here</div>
+      <div id="screen-notifications" class="screen">Notifications content here</div>
+
+      <div id="screen-messages" class="screen">
+        <h2>Messages</h2>
+        <div class="conversation-list" id="conversationList"></div>
+        <div id="chatView" style="display:none;">
+          <button onclick="closeChat()">← Back</button>
+          <h3 id="chatPartner"></h3>
+          <div id="chatMessages" class="chat-messages"></div>
+          <div class="chat-input">
+            <input id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="screen-my-posts" class="screen">My Posts content here</div>
+      <div id="screen-payments" class="screen">Payments content here</div>
+      <div id="screen-premium" class="screen">Premium content here</div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" data-screen="apps">📱 Apps</button>
+      <button class="nav-btn" data-screen="games">🎮 Games</button>
+      <button class="nav-btn" data-screen="videos">🎬 Videos</button>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h2>Upload</h2>
+        <select id="uploadCategory">
+          <option value="app">App</option>
+          <option value="game">Game</option>
+          <option value="video">Video</option>
+        </select>
+        <input type="file" id="fileInput">
+        <input type="number" id="price" placeholder="Price (0 for free)" min="0" step="0.01">
+        <input type="text" id="description" placeholder="Description">
+        <button id="btnUpload">Upload</button>
+        <button class="secondary" onclick="closeUploadModal()">Cancel</button>
+        <div id="uploadResult"></div>
+      </div>
+    </div>
+
+    <!-- File Details / Video Player Modal -->
+    <div id="fileModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h2 id="fileTitle"></h2>
+        <div id="fileDetails"></div>
+        <video id="videoPlayer" controls style="width:100%; display:none;"></video>
+        <div class="video-actions" style="margin-top:0.5rem;">
+          <a id="downloadLink" href="#" target="_blank" class="download-btn">⬇️ Download</a>
+          <button id="btnMessageOwner" class="message-btn">💬 Message Owner</button>
+          <button class="secondary" onclick="closeFileModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
