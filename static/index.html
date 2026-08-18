@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>OpenBox</title>
+  <link rel="manifest" href="/static/manifest.json">
   <link rel="stylesheet" href="/static/style.css">
-<link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
   <div id="app">
+
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
       <div class="sidebar-header">
@@ -41,21 +42,38 @@
         </div>
         <div class="cards-container" id="appsContainer"></div>
       </div>
+
       <div id="screen-games" class="screen">
         <div class="upload-btn-container">
           <button id="btnShowUploadGames">⬆️ Upload</button>
         </div>
         <div class="cards-container" id="gamesContainer"></div>
       </div>
+
       <div id="screen-videos" class="screen">
         <div class="upload-btn-container">
           <button id="btnShowUploadVideos">⬆️ Upload</button>
         </div>
         <div class="cards-container" id="videosContainer"></div>
       </div>
+
       <div id="screen-settings" class="screen">Settings content here</div>
       <div id="screen-notifications" class="screen">Notifications content here</div>
-      <div id="screen-messages" class="screen">Messages content here</div>
+
+      <div id="screen-messages" class="screen">
+        <h2>Messages</h2>
+        <div class="conversation-list" id="conversationList"></div>
+        <div id="chatView" style="display:none;">
+          <button onclick="closeChat()">← Back</button>
+          <h3 id="chatPartner"></h3>
+          <div id="chatMessages" class="chat-messages"></div>
+          <div class="chat-input">
+            <input id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
       <div id="screen-my-posts" class="screen">My Posts content here</div>
       <div id="screen-payments" class="screen">Payments content here</div>
       <div id="screen-premium" class="screen">Premium content here</div>
@@ -86,17 +104,20 @@
       </div>
     </div>
 
-    <!-- Video Player Modal -->
-    <div id="videoModal" class="modal" style="display:none;">
+    <!-- File Details / Video Player Modal -->
+    <div id="fileModal" class="modal" style="display:none;">
       <div class="modal-content">
-        <h2 id="videoTitle"></h2>
-        <video id="videoPlayer" controls style="width:100%;"></video>
-        <div class="video-actions">
+        <h2 id="fileTitle"></h2>
+        <div id="fileDetails"></div>
+        <video id="videoPlayer" controls style="width:100%; display:none;"></video>
+        <div class="video-actions" style="margin-top:0.5rem;">
           <a id="downloadLink" href="#" target="_blank" class="download-btn">⬇️ Download</a>
-          <button class="secondary" onclick="closeVideoModal()">Close</button>
+          <button id="btnMessageOwner" class="message-btn">💬 Message Owner</button>
+          <button class="secondary" onclick="closeFileModal()">Close</button>
         </div>
       </div>
     </div>
+
   </div>
 
   <script src="/static/app.js"></script>
