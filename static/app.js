@@ -1,8 +1,16 @@
 let currentPhone = localStorage.getItem('openbox_phone') || '';
-
 const API = '/api/v1';
 
-// Show signup prompt if no phone
+// Register service worker on page load
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed', err));
+  });
+}
+
+// Show signup/login screen if no phone
 if (!currentPhone) {
   document.body.innerHTML = `
     <div style="max-width:400px;margin:auto;padding:2rem;">
@@ -14,9 +22,11 @@ if (!currentPhone) {
       <button onclick="login()">Login</button>
     </div>
   `;
+
   window.signup = async () => {
     const res = await fetch('/api/v1/signup', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         full_name: document.getElementById('signupName').value,
         phone: document.getElementById('signupPhone').value,
@@ -31,9 +41,11 @@ if (!currentPhone) {
       alert('Signup failed');
     }
   };
+
   window.login = async () => {
     const res = await fetch('/api/v1/login', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: document.getElementById('signupPhone').value,
         password: document.getElementById('signupPassword').value
@@ -48,10 +60,12 @@ if (!currentPhone) {
     }
   };
 } else {
+  // Initialise the main app
   loadFiles('app');
   loadFiles('game');
   loadFiles('video');
   setupNavigation();
+  setupUploadButtons();
 }
 
 function setupNavigation() {
@@ -63,12 +77,20 @@ function setupNavigation() {
       document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
     });
   });
+
   document.getElementById('btnOpenSidebar').addEventListener('click', () => {
     document.getElementById('sidebar').classList.add('open');
   });
   document.getElementById('btnCloseSidebar').addEventListener('click', () => {
     document.getElementById('sidebar').classList.remove('open');
   });
+}
+
+function setupUploadButtons() {
+  document.getElementById('btnShowUpload').addEventListener('click', showUploadModal);
+  document.getElementById('btnShowUploadGames').addEventListener('click', showUploadModal);
+  document.getElementById('btnShowUploadVideos').addEventListener('click', showUploadModal);
+  document.getElementById('btnUpload').addEventListener('click', uploadFile);
 }
 
 async function loadFiles(category) {
@@ -85,7 +107,7 @@ async function loadFiles(category) {
 }
 
 function openFileDetails(fileId) {
-  fetch(`/api/v1/files?q=${fileId}`).then(r=>r.json()).then(files => {
+  fetch('/api/v1/files').then(r => r.json()).then(files => {
     const f = files.find(x => x.id === fileId);
     if (f) {
       if (f.category === 'video') {
@@ -94,7 +116,6 @@ function openFileDetails(fileId) {
         document.getElementById('downloadLink').href = `/api/v1/download/${f.id}`;
         document.getElementById('videoModal').style.display = 'flex';
       } else {
-        // For apps/games, trigger download
         window.open(`/api/v1/download/${f.id}`, '_blank');
       }
     }
@@ -110,15 +131,12 @@ function closeVideoModal() {
 function showUploadModal() {
   document.getElementById('uploadModal').style.display = 'flex';
 }
+
 function closeUploadModal() {
   document.getElementById('uploadModal').style.display = 'none';
 }
 
-document.getElementById('btnShowUpload').addEventListener('click', showUploadModal);
-document.getElementById('btnShowUploadGames').addEventListener('click', showUploadModal);
-document.getElementById('btnShowUploadVideos').addEventListener('click', showUploadModal);
-
-document.getElementById('btnUpload').addEventListener('click', async () => {
+async function uploadFile() {
   const fileInput = document.getElementById('fileInput');
   const category = document.getElementById('uploadCategory').value;
   const price = document.getElementById('price').value || '0';
@@ -132,22 +150,15 @@ document.getElementById('btnUpload').addEventListener('click', async () => {
   formData.append('price', price);
   formData.append('description', description);
 
-  const res = await fetch('/api/v1/upload', { method:'POST', body: formData });
+  const res = await fetch('/api/v1/upload', { method: 'POST', body: formData });
   const data = await res.json();
   if (res.ok) {
-    document.getElementById('uploadResult').textContent = 'Uploaded! Grid: ' + String.fromCharCode(65+data.gsp_col) + data.gsp_row;
+    document.getElementById('uploadResult').textContent =
+      'Uploaded! Grid: ' + String.fromCharCode(65 + data.gsp_col) + data.gsp_row;
     closeUploadModal();
     loadFiles(category);
   } else {
-    document.getElementById('uploadResult').textContent = 'Upload failed: ' + (data.detail || JSON.stringify(data));
+    document.getElementById('uploadResult').textContent =
+      'Upload failed: ' + (data.detail || JSON.stringify(data));
   }
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(reg => console.log('SW registered'))
-      .catch(err => console.log('SW registration failed', err));
-  });
 }
-
-});
