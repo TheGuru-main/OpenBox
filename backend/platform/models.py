@@ -1,10 +1,8 @@
-from sqlalchemy import Column, String, Integer, Float, Text, Boolean, DateTime, ForeignKey, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-import uuid, os
+from sqlalchemy import Column, String, Integer, Float, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from platform.database import Base
+import uuid
 from datetime import datetime
-
-Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
