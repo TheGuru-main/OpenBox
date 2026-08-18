@@ -141,4 +141,13 @@ document.getElementById('btnUpload').addEventListener('click', async () => {
   } else {
     document.getElementById('uploadResult').textContent = 'Upload failed: ' + (data.detail || JSON.stringify(data));
   }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed', err));
+  });
+}
+
 });
